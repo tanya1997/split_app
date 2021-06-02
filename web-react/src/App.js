@@ -4,6 +4,11 @@ import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 
 import UserList from './components/UserList'
 
+import LoginButton from './components/LoginButton'
+import LogoutButton from './components/LogoutButton'
+import Profile from './components/Profile'
+import { useAuth0 } from '@auth0/auth0-react'
+
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
 import {
@@ -136,6 +141,9 @@ const useStyles = makeStyles((theme) => ({
 export default function App() {
   const classes = useStyles()
   const [open, setOpen] = React.useState(true)
+
+  const { isAuthenticated } = useAuth0()
+
   const handleDrawerOpen = () => {
     setOpen(true)
   }
@@ -178,6 +186,13 @@ export default function App() {
             >
               Welcome To GRANDstack App
             </Typography>
+            {!isAuthenticated && <LoginButton />}
+            {isAuthenticated && (
+              <div>
+                <LogoutButton />
+                <Profile />
+              </div>
+            )}
           </Toolbar>
         </AppBar>
         <Drawer
