@@ -8,48 +8,15 @@ import LoginButton from './components/LoginButton'
 import LogoutButton from './components/LogoutButton'
 import Profile from './components/Profile'
 import { useAuth0 } from '@auth0/auth0-react'
+import Pipeline from './AddAndDeleteTab'
 
+import { gql, useQuery } from '@apollo/client'
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
-import {
-  CssBaseline,
-  Drawer,
-  Box,
-  AppBar,
-  Toolbar,
-  List,
-  Typography,
-  Divider,
-  IconButton,
-  Container,
-  Link as MUILink,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-} from '@material-ui/core'
-import { Link } from 'react-router-dom'
-import {
-  ChevronLeft as ChevronLeftIcon,
-  Menu as MenuIcon,
-  Dashboard as DashboardIcon,
-  People as PeopleIcon,
-} from '@material-ui/icons'
-import Dashboard from './components/Dashboard'
+import { CssBaseline, AppBar, Toolbar, Typography } from '@material-ui/core'
+import UserChecker from './UserChecker'
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <MUILink color="inherit" href="https://grandstack.io/">
-        Your GRANDstack App Name Here
-      </MUILink>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  )
-}
-
-const drawerWidth = 240
+const drawerWidth = 0
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -142,7 +109,7 @@ export default function App() {
   const classes = useStyles()
   const [open, setOpen] = React.useState(true)
 
-  const { isAuthenticated } = useAuth0()
+  const { user, isAuthenticated } = useAuth0()
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -150,6 +117,9 @@ export default function App() {
   const handleDrawerClose = () => {
     setOpen(false)
   }
+
+  /* if (isAuthenticated)
+  checkUser();*/
 
   return (
     <Router>
@@ -160,23 +130,6 @@ export default function App() {
           className={clsx(classes.appBar, open && classes.appBarShift)}
         >
           <Toolbar className={classes.toolbar}>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              className={clsx(
-                classes.menuButton,
-                open && classes.menuButtonHidden
-              )}
-            >
-              <MenuIcon />
-            </IconButton>
-            <img
-              className={classes.appBarImage}
-              src="img/grandstack.png"
-              alt="GRANDstack logo"
-            />
             <Typography
               component="h1"
               variant="h6"
@@ -184,66 +137,25 @@ export default function App() {
               noWrap
               className={classes.title}
             >
-              Welcome To GRANDstack App
+              Split Browser Tab
             </Typography>
             {!isAuthenticated && <LoginButton />}
             {isAuthenticated && (
-              <div>
-                <LogoutButton />
+              <div className="box">
                 <Profile />
+                <LogoutButton />
+                <UserChecker />
               </div>
             )}
           </Toolbar>
         </AppBar>
-        <Drawer
-          variant="permanent"
-          classes={{
-            paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-          }}
-          open={open}
-        >
-          <div className={classes.toolbarIcon}>
-            <IconButton onClick={handleDrawerClose}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </div>
-          <Divider />
-          <List>
-            <Link to="/" className={classes.navLink}>
-              <ListItem button>
-                <ListItemIcon>
-                  <DashboardIcon />
-                </ListItemIcon>
-                <ListItemText primary="Dashboard" />
-              </ListItem>
-            </Link>
 
-            <Link to="/users" className={classes.navLink}>
-              <ListItem button>
-                <ListItemIcon>
-                  <PeopleIcon />
-                </ListItemIcon>
-                <ListItemText primary="Users" />
-              </ListItem>
-            </Link>
-          </List>
-          <Divider />
-        </Drawer>
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          <Container maxWidth="lg" className={classes.container}>
-            <Switch>
-              <Route exact path="/" component={Dashboard} />
-              <Route exact path="/businesses" component={UserList} />
-              <Route exact path="/users" component={UserList} />
-            </Switch>
-
-            <Box pt={4}>
-              <Copyright />
-            </Box>
-          </Container>
+          {isAuthenticated && <Pipeline />}
         </main>
       </div>
     </Router>
   )
 }
+//
